@@ -13,7 +13,7 @@ namespace Dead_Lock_Project
         {
             Resourcer myResourcer = new Resourcer();
 
-            
+            myResourcer.Start();
         }
     }
 }

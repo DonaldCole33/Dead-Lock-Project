@@ -9,24 +9,24 @@ namespace Dead_Lock_Project
 
     public class Process
     {
-        private Dictionary<int, int> _allocatedResources;
+        private List<int> _allocatedResources;
 
-        private Dictionary<int, int> _neededResources;
+        private List<int> _neededResources;
 
         private int _numberOfResources;
 
         public Process(int numberOfResources)
         {
             _numberOfResources = numberOfResources;
-            _allocatedResources = new Dictionary<int, int>(_numberOfResources);
-            _neededResources = new Dictionary<int, int>(_numberOfResources);
+            _allocatedResources = new List<int>(_numberOfResources);
+            _neededResources = new List<int>(_numberOfResources);
         }
 
         public void AddAllocatedResources(string[] resourceList)
         {
             for (int i = 0; i < _numberOfResources; i++)
             {
-                _allocatedResources.Add(i, int.Parse(resourceList.ElementAt(i)));
+                _allocatedResources.Add(int.Parse(resourceList.ElementAt(i)));
             }
         }
 
@@ -34,8 +34,18 @@ namespace Dead_Lock_Project
         {
             for (int i = 0; i < _numberOfResources; i++)
             {
-                _allocatedResources.Add(i, int.Parse(resourceList.ElementAt(i)));
+                _allocatedResources.Add(int.Parse(resourceList.ElementAt(i)));
             }
+        }
+
+        public int getAllocatedResourceElementAt(int element)
+        {
+            return _allocatedResources.ElementAt(element);
+        }
+
+        public int getNeededResourceElementAt(int element)
+        {
+            return _neededResources.ElementAt(element);
         }
 
         public void RemoveNeededResources()
