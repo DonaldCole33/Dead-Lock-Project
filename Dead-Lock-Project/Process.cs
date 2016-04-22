@@ -15,6 +15,8 @@ namespace Dead_Lock_Project
 
         private int _numberOfResources;
 
+        public bool? ResourcesSatisfied { get; set; }
+
         public Process(int numberOfResources)
         {
             _numberOfResources = numberOfResources;
@@ -34,7 +36,7 @@ namespace Dead_Lock_Project
         {
             for (int i = 0; i < _numberOfResources; i++)
             {
-                _allocatedResources.Add(int.Parse(resourceList.ElementAt(i)));
+                _neededResources.Add(int.Parse(resourceList.ElementAt(i)));
             }
         }
 
@@ -56,6 +58,34 @@ namespace Dead_Lock_Project
         public void RemoveAllocatedResources()
         {
 
+        }
+
+        /// <summary>
+        /// This function will take in the resources that are available, 
+        /// if there are enough to satisfy this process it will return true, else false
+        /// </summary>
+        /// <param name="availableResources"></param>
+        /// <returns>bool</returns>
+        public bool CheckForSafety(List<int> availableResources)
+        {
+            var count = 0; 
+
+            for (int i = 0; i < _numberOfResources; i++)
+            {
+                if (_neededResources[i] <= availableResources[i])
+                {
+                    count++;
+                }
+            }
+            
+            if(count == _numberOfResources)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

@@ -12,9 +12,9 @@ namespace Dead_Lock_Project
     /// </summary>
     public class Resourcer
     {
-        private Dictionary<int, int> _initialResources;
+        private List<int> _initialResources;
 
-        private Dictionary<int, Process> _processes;
+        private List<Process> _processes;
 
         private int _numberofResources;
 
@@ -60,8 +60,8 @@ namespace Dead_Lock_Project
             _numberofProcesses = getProcessesAmountFromList();
             _numberofResources = getResourcesAmountFromList();
 
-            _initialResources = new Dictionary<int, int>(_numberofResources);
-            _processes = new Dictionary<int, Process>(_numberofProcesses);
+            _initialResources = new List< int>(_numberofResources);
+            _processes = new List<Process>(_numberofProcesses);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Dead_Lock_Project
             {
                 var process = new Process(_numberofResources);
                 process.AddAllocatedResources(_splitLineList.ElementAt(0));
-                _processes.Add(i, process);
+                _processes.Add(process);
                 _splitLineList.RemoveAt(0);
             }
         }
@@ -99,7 +99,7 @@ namespace Dead_Lock_Project
             for (int i = 0; i < _numberofResources; i++)
             {
                 int resourceAmount = int.Parse(_splitLineList.First().ElementAt(i+1));
-                _initialResources.Add(i, resourceAmount);
+                _initialResources.Add(resourceAmount);
             }
         }
 
@@ -138,7 +138,60 @@ namespace Dead_Lock_Project
         private bool checkDeadlockDetection()
         {
             //Calculate the Available resources left from process allocation
+            var availableResourcesLeft = new List<int>(_numberofProcesses);
+            var resources = 0;
+
+            for (int i = 0; i < _numberofResources; i++)
+            {
+                for (int j = 0; j < _numberofProcesses; j++)
+                {
+                    resources += _processes.ElementAt(j).getAllocatedResourceElementAt(i);
+                }
+                availableResourcesLeft.Add(_initialResources.ElementAt(i) - resources);
+                resources = 0;
+            }
+
+            //var resourceNeedsForEachProcess = new List<string[]>();
+
+            //for (int i = 0; i < NumberofProcesses; i++)
+            //{
+            //    resourceNeedsForEachProcess.Add(_splitLineList.First());
+            //    _splitLineList.RemoveAt(0);
+            //}
+
+            //We need to see if we can prevent deadlocks
+
+            List<Process> workPool = new List<Process>(_processes);
+            List<Process> finishedPool = new List<Process>(NumberofProcesses);
+            List<Process> holdPool = new List<Process>(NumberofProcesses);
+
+            addNeededResourcesToProcesses();
+
+            while (workPool.Any()) { 
+                for (int i = 0; i < NumberofProcesses; i++)
+                {
+                    for (int j = 0; j < NumberofResources; j++)
+                    {
+                        if (workPool[i].CheckForSafety(availableResourcesLeft))
+                        {
+                            finishedPool.Add(workPool[i]);
+                            workPool.RemoveAt(i);
+                        }
+                    }
+                }
+            }   
+            
             return false;
         }
+
+        private void addNeededResourcesToProcesses()
+        {
+            for (int i = 0; i < NumberofProcesses; i++)
+            {
+                _processes.ElementAt(i).AddNeededResources(_splitLineList.First());
+                _splitLineList.RemoveAt(0);
+            }
+        }
+        
     }
 }
