@@ -1,0 +1,6 @@
+C:\Users\Don\Source\Repos\Dead-Lock-Project\Dead-Lock-Project\bin\Debug\Dead-Lock-Project.exe.config
+C:\Users\Don\Source\Repos\Dead-Lock-Project\Dead-Lock-Project\obj\Debug\Dead-Lock-Project.csprojResolveAssemblyReference.cache
+C:\Users\Don\Source\Repos\Dead-Lock-Project\Dead-Lock-Project\bin\Debug\Dead-Lock-Project.exe
+C:\Users\Don\Source\Repos\Dead-Lock-Project\Dead-Lock-Project\bin\Debug\Dead-Lock-Project.pdb
+C:\Users\Don\Source\Repos\Dead-Lock-Project\Dead-Lock-Project\obj\Debug\Dead-Lock-Project.exe
+C:\Users\Don\Source\Repos\Dead-Lock-Project\Dead-Lock-Project\obj\Debug\Dead-Lock-Project.pdb
