@@ -54,12 +54,12 @@ namespace Dead_Lock_Project
 
         public void RemoveNeededResources()
         {
-
+            _neededResources.Clear();
         }
 
         public void RemoveAllocatedResources()
         {
-
+            _allocatedResources.Clear();
         }
 
         /// <summary>

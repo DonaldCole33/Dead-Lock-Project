@@ -117,19 +117,31 @@ namespace Dead_Lock_Project
 
             //now we need to add the resources to the processes
             int noSafeStateCount = 0;
+            addProcessesFromSplitLineList();        //Init the Processes
 
             while (_splitLineList.Count() > 0)
             {
-                do
+                if (!checkDeadlockDetection())
                 {
-                    addProcessesFromSplitLineList();
-
-                } while (checkDeadlockDetection());
-                noSafeStateCount++;
-
+                    noSafeStateCount++;
+                }
+                else
+                {
+                    noSafeStateCount = 0;
+                    
+                }
+                
                 if (noSafeStateCount == 3)
                 {
-                    //We need to do some special stuff to the queue
+                    //We need to do some special stuff to the queue then restart the same process queue
+                }
+                else
+                {
+                    //Clear the needed resources from the processes
+                    foreach(var process in _processes)
+                    {
+                        process.RemoveNeededResources();
+                    }
                 }
             }
 
@@ -159,10 +171,10 @@ namespace Dead_Lock_Project
             List<Process> finishedPool = new List<Process>(NumberofProcesses);
             List<Process> holdPool = new List<Process>(NumberofProcesses);
             var processChecks = new List<int>(NumberofProcesses);
-
             addNeededResourcesToProcesses();
 
             Console.WriteLine("Running Deadlock Detection");
+            Console.WriteLine("Initial Allocated Resources are:");
 
             while (workPool.Any())
             {
@@ -178,8 +190,7 @@ namespace Dead_Lock_Project
                         if (process.CheckForSafety(availableResourcesLeft))
                         {
                             //need to find at least one process within this j loop
-                            Console.WriteLine("Valid Process Found");
-                            strVar = "Process " + process.ProcessID;
+                            strVar = "Valid Process Found: Process " + process.ProcessID;
                             Console.WriteLine(strVar);
 
                             finishedPool.Add(process);
@@ -200,12 +211,15 @@ namespace Dead_Lock_Project
                     if (finishedPool.Count < (i + 1))
                     {
                         //Error -> Deadlock State
-                        //Remove Workpool
+                        Console.WriteLine("DEADLOCK STATE DETECTED\n");
                         return false;
                     }
                 }
-            }   
-            
+            }
+
+            Console.WriteLine("VALID STATE DETECTED: ");
+            PrintValidState(finishedPool);
+            Console.WriteLine();
             return true;
         }
 
@@ -224,6 +238,7 @@ namespace Dead_Lock_Project
             {
                 Console.Write(i);
             }
+            Console.WriteLine();
         }
 
         private void PrintResources(List<int> resources)
@@ -232,8 +247,20 @@ namespace Dead_Lock_Project
             {
                 Console.Write( i);
             }
+            Console.WriteLine();
         }
 
+        public void PrintValidState(List<Process> processPool)
+        {
+            string output = "(";
+            foreach(var process in processPool)
+            {
+                output += process.ProcessID + ",";
+            }
+            var newOutput = output.TrimEnd(',');
+            newOutput += ")";
+            Console.WriteLine(newOutput);
+        }
 
-}
+    }
 }
