@@ -57,11 +57,11 @@ namespace Dead_Lock_Project
         {
             _splitLineList = FileParser.GetSplitLineListFromFile(Constants.dataFileLocation);
 
-            _numberofProcesses = getProcessesAmountFromList();
+            NumberofProcesses = getProcessesAmountFromList();
             _numberofResources = getResourcesAmountFromList();
 
-            _initialResources = new List< int>(_numberofResources);
-            _processes = new List<Process>(_numberofProcesses);
+            _initialResources = new List<int>(_numberofResources);
+            _processes = new List<Process>(NumberofProcesses);
         }
 
         /// <summary>
@@ -85,9 +85,10 @@ namespace Dead_Lock_Project
         /// </summary>
         private void addProcessesFromSplitLineList()
         {
-            for (int i = 0; i < _numberofProcesses; i++)
+            for (int i = 0; i < NumberofProcesses; i++)
             {
                 var process = new Process(_numberofResources);
+                process.ProcessID = i + 1;
                 process.AddAllocatedResources(_splitLineList.ElementAt(0));
                 _processes.Add(process);
                 _splitLineList.RemoveAt(0);
@@ -98,7 +99,7 @@ namespace Dead_Lock_Project
         {
             for (int i = 0; i < _numberofResources; i++)
             {
-                int resourceAmount = int.Parse(_splitLineList.First().ElementAt(i+1));
+                int resourceAmount = int.Parse(_splitLineList.First().ElementAt(i + 1));
                 _initialResources.Add(resourceAmount);
             }
         }
@@ -117,7 +118,8 @@ namespace Dead_Lock_Project
             //now we need to add the resources to the processes
             int noSafeStateCount = 0;
 
-            while (_splitLineList.Count() > 0) {
+            while (_splitLineList.Count() > 0)
+            {
                 do
                 {
                     addProcessesFromSplitLineList();
@@ -125,25 +127,25 @@ namespace Dead_Lock_Project
                 } while (checkDeadlockDetection());
                 noSafeStateCount++;
 
-                if(noSafeStateCount == 3)
+                if (noSafeStateCount == 3)
                 {
                     //We need to do some special stuff to the queue
                 }
             }
 
-            
-            
+
+
         }
 
         private bool checkDeadlockDetection()
         {
             //Calculate the Available resources left from process allocation
-            var availableResourcesLeft = new List<int>(_numberofProcesses);
+            var availableResourcesLeft = new List<int>(NumberofProcesses);
             var resources = 0;
 
             for (int i = 0; i < _numberofResources; i++)
             {
-                for (int j = 0; j < _numberofProcesses; j++)
+                for (int j = 0; j < NumberofProcesses; j++)
                 {
                     resources += _processes.ElementAt(j).getAllocatedResourceElementAt(i);
                 }
@@ -151,37 +153,60 @@ namespace Dead_Lock_Project
                 resources = 0;
             }
 
-            //var resourceNeedsForEachProcess = new List<string[]>();
-
-            //for (int i = 0; i < NumberofProcesses; i++)
-            //{
-            //    resourceNeedsForEachProcess.Add(_splitLineList.First());
-            //    _splitLineList.RemoveAt(0);
-            //}
-
             //We need to see if we can prevent deadlocks
 
             List<Process> workPool = new List<Process>(_processes);
             List<Process> finishedPool = new List<Process>(NumberofProcesses);
             List<Process> holdPool = new List<Process>(NumberofProcesses);
+            var processChecks = new List<int>(NumberofProcesses);
 
             addNeededResourcesToProcesses();
 
-            while (workPool.Any()) { 
+            Console.WriteLine("Running Deadlock Detection");
+
+            while (workPool.Any())
+            {
                 for (int i = 0; i < NumberofProcesses; i++)
                 {
-                    for (int j = 0; j < NumberofResources; j++)
+                    foreach (var process in workPool)    //go through each process until finished is filled or not
                     {
-                        if (workPool[i].CheckForSafety(availableResourcesLeft))
+                        string strVar = "Starting Process " + process.ProcessID + ", it's resources are: ";
+                        Console.WriteLine(strVar);
+                        process.PrintAllocatedResources();
+                        process.PrintNeededResources();
+
+                        if (process.CheckForSafety(availableResourcesLeft))
                         {
-                            finishedPool.Add(workPool[i]);
-                            workPool.RemoveAt(i);
+                            //need to find at least one process within this j loop
+                            Console.WriteLine("Valid Process Found");
+                            strVar = "Process " + process.ProcessID;
+                            Console.WriteLine(strVar);
+
+                            finishedPool.Add(process);
+                            workPool.Remove(process);
+
+                            for (int k = 0; k < NumberofResources; k++)         //Create a function for this loop
+                            {
+                                //Add the freed resources to the available Resources
+                                availableResourcesLeft[k] += process.getNeededResourceElementAt(k);
+                                availableResourcesLeft[k] += process.getAllocatedResourceElementAt(k);
+                            }
+                            Console.WriteLine("New Allocated Resources Available are:");
+                            PrintResources(availableResourcesLeft);
+                            break;
                         }
+                    }
+
+                    if (finishedPool.Count < (i + 1))
+                    {
+                        //Error -> Deadlock State
+                        //Remove Workpool
+                        return false;
                     }
                 }
             }   
             
-            return false;
+            return true;
         }
 
         private void addNeededResourcesToProcesses()
@@ -192,6 +217,23 @@ namespace Dead_Lock_Project
                 _splitLineList.RemoveAt(0);
             }
         }
-        
-    }
+
+        private void PrintAvailableResources()
+        {
+            foreach (int i in _initialResources)
+            {
+                Console.Write(i);
+            }
+        }
+
+        private void PrintResources(List<int> resources)
+        {
+            foreach (var i in resources)
+            {
+                Console.Write( i);
+            }
+        }
+
+
+}
 }

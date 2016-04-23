@@ -15,6 +15,8 @@ namespace Dead_Lock_Project
 
         private int _numberOfResources;
 
+        public int ProcessID;
+
         public bool? ResourcesSatisfied { get; set; }
 
         public Process(int numberOfResources)
@@ -86,6 +88,26 @@ namespace Dead_Lock_Project
             {
                 return false;
             }
+        }
+
+        public void PrintAllocatedResources()
+        {
+            string strVar = "Allocated: ";
+            foreach(int i in _allocatedResources)
+            {
+                Console.Write(i);
+            }
+            Console.WriteLine();
+        }
+
+        public void PrintNeededResources()
+        {
+            string strVar = "Needed: ";
+            foreach (int i in _neededResources)
+            {
+                Console.Write(i);
+            }
+            Console.WriteLine();
         }
     }
 }
