@@ -10,7 +10,7 @@ namespace Dead_Lock_Project
     /// <summary>
     /// Static Class that returns information from a text file
     /// </summary>
-    static public class FileParser
+    static public class FileParserService
     {
         
         /// <summary>
