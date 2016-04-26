@@ -1,2 +1,2 @@
 # Dead-Lock-Project
-Project that tests for deadlocks or safestates between processes and their resources.
+Project that tests for deadlocks or safestates between processes and their resources.  It will read in a text file with specific formatting for the program to read.  It may be altered as long as it keeps the same formatting.  Then it will run deadlock detection (Bankers Algorithm) on the processes and the available resources to them.  The program's objectives are in program3.pdf.
