@@ -11,9 +11,11 @@ namespace Dead_Lock_Project
     {
         static void Main(string[] args)
         {
-            Resourcer myResourcer = new Resourcer();
+            ResourcerService myResourcer = new ResourcerService();
 
             myResourcer.Start();
+            Console.WriteLine("Press Enter to Quit");
+            Console.ReadLine();
         }
     }
 }

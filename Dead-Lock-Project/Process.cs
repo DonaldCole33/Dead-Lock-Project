@@ -15,6 +15,8 @@ namespace Dead_Lock_Project
 
         private int _numberOfResources;
 
+        public int ProcessID;
+
         public bool? ResourcesSatisfied { get; set; }
 
         public Process(int numberOfResources)
@@ -34,6 +36,11 @@ namespace Dead_Lock_Project
 
         public void AddNeededResources(string[] resourceList)
         {
+            if (_neededResources.Any())
+            {
+                _neededResources.Clear();
+            }
+
             for (int i = 0; i < _numberOfResources; i++)
             {
                 _neededResources.Add(int.Parse(resourceList.ElementAt(i)));
@@ -52,12 +59,12 @@ namespace Dead_Lock_Project
 
         public void RemoveNeededResources()
         {
-
+            _neededResources.Clear();
         }
 
         public void RemoveAllocatedResources()
         {
-
+            _allocatedResources.Clear();
         }
 
         /// <summary>
@@ -85,6 +92,39 @@ namespace Dead_Lock_Project
             else
             {
                 return false;
+            }
+        }
+
+        public void PrintAllocatedResources()
+        {
+            string output = "Allocated: ";
+            foreach(int i in _allocatedResources)
+            {
+                output += i;
+                output += ",";
+            }
+            var newOutput = output.TrimEnd(',');
+            Console.WriteLine(newOutput);
+        }
+
+        public void PrintNeededResources()
+        {
+            string output = "Needed:    ";
+            foreach (int i in _neededResources)
+            {
+                output += i;
+                output += ",";
+            }
+            var newOutput = output.TrimEnd(',');
+            Console.WriteLine(newOutput);
+        }
+
+        public void RelenquishAllocatedResources()
+        {
+            for(int i = 0; i < _numberOfResources; i++)
+            {
+                _neededResources[i] += _allocatedResources[i];
+                _allocatedResources[i] = 0;
             }
         }
     }
