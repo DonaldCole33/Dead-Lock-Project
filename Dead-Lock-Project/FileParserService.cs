@@ -21,16 +21,15 @@ namespace Dead_Lock_Project
             List<string[]> _linesFromFile = new List<string[]>();
             StreamReader dataFile = File.OpenText(fileLocation);
             string line;
-            _linesFromFile = new List<string[]>();
 
             while ((line = dataFile.ReadLine()) != null) 
             {
+                //Trim off the trailing commas if there are any and then split the line to a string array
                 var lineItems = line.Trim(Constants.fileSeperators).Split(Constants.fileSeperators);
-                if (lineItems.First().Count() != 0)
+                if (lineItems.First().Count() != 0)     //When the Line is not empty
                 {
                     _linesFromFile.Add(lineItems);
                 }
-                
             }
             return _linesFromFile;
         }

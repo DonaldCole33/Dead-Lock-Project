@@ -16,27 +16,44 @@ namespace Dead_Lock_Project
         /// Start a new Resourcer Serivice that parses a specific file with Processes
         /// </summary>
         /// <param name="FileLocation"></param>
-        public ResourcerService()
+        public ResourcerService(string fileLocation)
         {
-            _splitLineList = FileParserService.GetSplitLineListFromFile(Constants.dataFileLocation);
-
+            _splitLineList = FileParserService.GetSplitLineListFromFile(fileLocation);
             NumberofProcesses = getProcessesAmountFromList();
-            _numberofResources = getResourcesAmountFromList();
+            NumberofResources = getResourcesAmountFromList();
 
-            _initialResources = new List<int>(_numberofResources);
+            _initialResources = new List<int>(NumberofResources);
             _processes = new List<Process>(NumberofProcesses);
         }
 
+        /// <summary>
+        /// The initial resources that were parsed from the file
+        /// </summary>
         private List<int> _initialResources;
 
+        /// <summary>
+        /// The list of Processes
+        /// </summary>
         private List<Process> _processes;
 
+        /// <summary>
+        /// The number of Resources
+        /// </summary>
         private int _numberofResources;
 
+        /// <summary>
+        /// The number of Processes
+        /// </summary>
         private int _numberofProcesses;
 
+        /// <summary>
+        /// The list of raw data in the form of string arrays
+        /// </summary>
         private List<string[]> _splitLineList;
 
+        /// <summary>
+        /// The number of resources
+        /// </summary>
         public int NumberofResources
         {
             get
@@ -50,6 +67,9 @@ namespace Dead_Lock_Project
             }
         }
 
+        /// <summary>
+        /// The Number of Processes
+        /// </summary>
         public int NumberofProcesses
         {
             get
@@ -66,13 +86,16 @@ namespace Dead_Lock_Project
         /// <summary>
         /// Get the amount of processes from a parsed Line list
         /// </summary>
-        /// <param name="splitLineList"></param>
-        /// <returns></returns>
+        /// <returns>int</returns>
         private int getProcessesAmountFromList()
         {
             return int.Parse(_splitLineList.First().First());
         }
 
+        /// <summary>
+        /// Get the amount of resources from a parsed line list
+        /// </summary>
+        /// <returns>int</returns>
         private int getResourcesAmountFromList()
         {
             return _splitLineList.First().Count() - 1;
@@ -94,6 +117,10 @@ namespace Dead_Lock_Project
             }
         }
 
+        /// <summary>
+        /// Add the initial allocated Resources from a split line list
+        /// into a new List of allocated Resourses
+        /// </summary>
         private void addInitialAllocatedResourcesFromSplitLineList()
         {
             for (int i = 0; i < _numberofResources; i++)
@@ -104,7 +131,7 @@ namespace Dead_Lock_Project
         }
 
         /// <summary>
-        /// This is the main method to run the Program
+        /// This is the main method to run the Resourcer
         /// </summary>
         public void Start()
         {
@@ -171,6 +198,11 @@ namespace Dead_Lock_Project
             
         }
 
+        /// <summary>
+        /// Check whether there is deadlocks for the next needed resources
+        /// vs the amount of available resources
+        /// </summary>
+        /// <returns>bool</returns>
         private bool checkDeadlockDetection()
         {
             //Calculate the Available resources left from process allocation
@@ -245,6 +277,9 @@ namespace Dead_Lock_Project
             return true;
         }
 
+        /// <summary>
+        /// Add the needed resources to each of the processes
+        /// </summary>
         private void addNeededResourcesToProcesses()
         {
             for (int i = 0; i < NumberofProcesses; i++)
@@ -254,6 +289,9 @@ namespace Dead_Lock_Project
             }
         }
 
+        /// <summary>
+        /// Print the Available Resources
+        /// </summary>
         private void PrintAvailableResources()
         {
             string output = "";
@@ -266,7 +304,11 @@ namespace Dead_Lock_Project
             Console.WriteLine(newOutput);
         }
 
-        private void PrintResources(List<int> resources)
+        /// <summary>
+        /// Print any list of resources
+        /// </summary>
+        /// <param name="resources"></param>
+        public void PrintResources(List<int> resources)
         {
             string output = "";
             foreach (var i in resources)
@@ -278,6 +320,10 @@ namespace Dead_Lock_Project
             Console.WriteLine(newOutput);
         }
 
+        /// <summary>
+        /// Print the Valid State format from a finished list of Processes
+        /// </summary>
+        /// <param name="processPool"></param>
         public void PrintValidState(List<Process> processPool)
         {
             string output = "(";
